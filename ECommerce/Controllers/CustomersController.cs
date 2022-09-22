@@ -1,5 +1,7 @@
-﻿using ECommerce.Data;
+﻿using AutoMapper;
+using ECommerce.Application.DTOS.Customer;
 using ECommerce.Domain.Customers;
+using ECommerce.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,53 +12,55 @@ namespace ECommerce.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly ApiDbContext _context;
-        public CustomersController(ApiDbContext context)
+        private readonly ICustomerRepository _repository;
+        private readonly IMapper _mapper;
+
+        public CustomersController(ICustomerRepository repository, IMapper mapper)
         {
-            _context = context;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetAsync()
         {
-            return Ok( await _context.Customers.ToListAsync());
+            return Ok(_mapper.Map<IEnumerable<CustomerDTO>>(await _repository.FindAsync()));
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Customer>> GetOneAsync(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _repository.FindByIdAsync(id);
 
             if (customer is null) return NotFound();
-            
-            return Ok(customer);
+
+            return Ok(_mapper.Map<CustomerDTO>(customer));
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostAsync([FromBody] Customer customer)
+        public async Task<ActionResult> PostAsync([FromBody] CustomerDTO customerDTO)
         {
-            var customerExists = await _context.Customers.AnyAsync(c => c.Email == customer.Email);
-            if (customerExists) return Conflict("The email is already in use");
+            var customer = _mapper.Map<Customer>(customerDTO);
+            var customerExists = await _repository.SearchAsync(c => c.Email == customer.Email);
+            if (customerExists != null) return Conflict("The email is already in use");
             
-            await _context.Customers.AddAsync(customer);
-            await _context.SaveChangesAsync();
-
+            await _repository.AddAsync(customer);
+            
             return NoContent();
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> PutAsync(int id, [FromBody] Customer customer)
+        public async Task<ActionResult> PutAsync(int id, [FromBody] CustomerDTO customerDTO)
         {
+            var customer = _mapper.Map<Customer>(customerDTO);
             if (id != customer.Id) return BadRequest();
 
-            var customerExists = await _context.Customers.AnyAsync(c => c.Email == customer.Email && c.Id != id);
-            if (customerExists) return Conflict("The email is already in use");
-
-            _context.Entry(customer).State = EntityState.Modified;
+            var customerExists = await _repository.SearchAsync(c => c.Email == customer.Email && c.Id != id);
+            if (customerExists != null) return Conflict("The email is already in use");
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _repository.UpdateAsync(customer);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -73,18 +77,17 @@ namespace ECommerce.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _repository.FindByIdAsync(id);
             if (customer is null) return NotFound();
 
-            _context.Customers.Remove(customer).State = EntityState.Deleted;
-            await _context.SaveChangesAsync();
+            await _repository.RemoveAsync(customer.Id);
 
-            return Ok(customer);
+            return Ok(_mapper.Map<CustomerDTO>(customer));
         }
 
         private async Task<bool> CustomerExists(int id)
         {
-            return await _context.Customers.AnyAsync(e => e.Id == id);
+            return await _repository.AnyAsync(id);
         }
     }
 }
