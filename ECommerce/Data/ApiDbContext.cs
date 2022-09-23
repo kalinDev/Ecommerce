@@ -1,4 +1,4 @@
-﻿using ECommerce.Domain.Customers;
+﻿using ECommerce.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Data
@@ -6,6 +6,7 @@ namespace ECommerce.Data
     public class ApiDbContext : DbContext
     {
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Address> Addresses{ get; set; }
         
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options) 
         { 

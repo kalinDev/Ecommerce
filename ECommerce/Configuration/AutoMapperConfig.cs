@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ECommerce.Application.DTOS.Customer;
-using ECommerce.Domain.Customers;
+using ECommerce.Domain.Models;
 
 namespace ECommerce.Configuration
 {
@@ -9,6 +9,9 @@ namespace ECommerce.Configuration
         public AutoMapperConfig()
         {
             CreateMap<Customer, CustomerDTO>().ReverseMap();
+            CreateMap<Customer, DetailedCustomerDTO>().ReverseMap();
+            CreateMap<Customer, PostCustomerDTO>().ReverseMap();
+
         }
     }
 }

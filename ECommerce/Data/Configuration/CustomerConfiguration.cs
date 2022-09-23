@@ -1,4 +1,4 @@
-﻿using ECommerce.Domain.Customers;
+﻿using ECommerce.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,11 +13,11 @@ namespace ECommerce.Data.Configuration
             builder.Property(customer => customer.Id).ValueGeneratedOnAdd();
             builder.Property(customer => customer.Name).IsRequired().HasColumnType("varchar(100)");
             builder.Property(customer => customer.Email).IsRequired().HasColumnType("varchar(100)");
-            builder.Property(customer => customer.Phone).IsRequired().HasColumnType("varchar(20)");
-            builder.Property(customer => customer.Address).IsRequired().HasColumnType("varchar(100)");
-            builder.Property(customer => customer.City).IsRequired().HasColumnType("varchar(30)");
-            builder.Property(customer => customer.PostalCode).IsRequired().HasColumnType("varchar(10)");
-            builder.Property(customer => customer.Country).IsRequired().HasColumnType("varchar(30)");
+            builder.Property(customer => customer.DeletedAt).HasColumnType("datetime2");
+            builder.Property(customer => customer.BirthDate).IsRequired().HasColumnType("datetime2");
+            builder.Property(customer => customer.Password).IsRequired().HasColumnType("varchar(20)");
+
+            builder.HasMany(customer => customer.Addresses).WithOne(address => address.Customer).HasForeignKey(address => address.CustomerId).OnDelete(DeleteBehavior.Cascade);
 
             builder.HasIndex(customer => customer.Name);
             builder.HasIndex(customer => customer.Email).IsUnique();
