@@ -2,9 +2,12 @@
 
 namespace ECommerce.Domain
 {
-    public class Entity
-    {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-    }
+public class Entity
+{
+    [Key]
+    public Guid Id {
+        get;
+        set;
+    } = Guid.NewGuid();
+}
 }

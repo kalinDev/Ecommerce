@@ -4,14 +4,14 @@ using ECommerce.Domain.Models;
 
 namespace ECommerce.Configuration
 {
-    public class AutoMapperConfig : Profile
+public class AutoMapperConfig : Profile
+{
+    public AutoMapperConfig()
     {
-        public AutoMapperConfig()
-        {
-            CreateMap<Customer, CustomerDTO>().ReverseMap();
-            CreateMap<Customer, DetailedCustomerDTO>().ReverseMap();
-            CreateMap<Customer, PostCustomerDTO>().ReverseMap();
+        CreateMap<Customer, CustomerDTO>().ReverseMap();
+        CreateMap<Customer, DetailedCustomerDTO>().ReverseMap();
+        CreateMap<Customer, PostCustomerDTO>().ReverseMap();
 
-        }
     }
+}
 }

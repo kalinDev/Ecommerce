@@ -16,7 +16,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ResolveDependencies();
 
 builder.Services.AddDbContext<ApiDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -2,8 +2,8 @@
 
 namespace ECommerce.Domain.Interfaces
 {
-    public interface ICustomerRepository : IRepository<Customer>
-    {
-        Task<Customer> FindByIdWithAddress(Guid id);
-    }
+public interface ICustomerRepository : IRepository<Customer>
+{
+    Task<Customer> FindByIdWithAddress(Guid id);
+}
 }
