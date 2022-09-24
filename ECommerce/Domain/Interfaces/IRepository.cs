@@ -1,10 +1,9 @@
 ﻿using System.Linq.Expressions;
 
-namespace ECommerce.Domain.Interfaces
-{
-public interface IRepository<TEntity>
-{
-    Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TEntity, bool>> predicate);
+namespace ECommerce.Domain.Interfaces {
+  public interface IRepository<TEntity> {
+    Task<IEnumerable<TEntity>>
+    SearchAsync(Expression<Func<TEntity, bool>> predicate);
     Task<TEntity> FindByIdAsync(Guid id);
     Task<List<TEntity>> FindAsync();
     Task AddAsync(TEntity entity);
@@ -12,5 +11,5 @@ public interface IRepository<TEntity>
     Task RemoveAsync(Guid id);
     Task<bool> AnyAsync(Guid id);
     Task<int> SaveChangesAsync();
-}
+  }
 }
