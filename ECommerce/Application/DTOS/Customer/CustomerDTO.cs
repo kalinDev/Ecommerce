@@ -4,7 +4,9 @@ namespace ECommerce.Application.DTOS.Customer
 {
     public class CustomerDTO
     {
-
+        [Key]
+        public Guid Id { get; set; }
+        
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
