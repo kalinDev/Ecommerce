@@ -5,7 +5,7 @@ using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Controllers
+namespace ECommerce.Services.Api.Controllers
 {
     [ApiConventionType(typeof(DefaultApiConventions))]
     [Route("api/[controller]")]
