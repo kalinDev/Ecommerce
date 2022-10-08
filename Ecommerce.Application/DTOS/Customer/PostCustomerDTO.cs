@@ -2,10 +2,10 @@
 
 namespace ECommerce.Application.DTOS.Customer
 {
-    public class PostCustomerDTO : CustomerDTO
+    public record class PostCustomerDTO : CustomerDTO
     {
         [Required]
         [MaxLength(20)]
-        public string Password { get; set; }
+        public string Password { get; init; }
     }
 }

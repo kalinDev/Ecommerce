@@ -2,8 +2,8 @@
 
 namespace ECommerce.Application.DTOS.Customer
 {
-    public class DetailedCustomerDTO : CustomerDTO
+    public record class DetailedCustomerDTO : CustomerDTO
     {
-        public List<Address> Addresses { get; set; }
+        public List<Address> Addresses { get; init; }
     }
 }
