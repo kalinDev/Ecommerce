@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Data.Repository
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity, new()
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity, new() 
     {
         protected readonly ApiDbContext Db;
         protected readonly DbSet<TEntity> DbSet;
@@ -25,22 +25,19 @@ namespace ECommerce.Data.Repository
         public async Task<List<TEntity>> FindAsync() =>
             await DbSet.ToListAsync();
 
-        public async Task AddAsync(TEntity entity)
+        public void Add(TEntity entity)
         {
-            await DbSet.AddAsync(entity);
-            await SaveChangesAsync();
+            DbSet.Add(entity);
         }
 
-        public async Task UpdateAsync(TEntity entity)
+        public void Update(TEntity entity)
         {
             DbSet.Update(entity);
-            await SaveChangesAsync();
         }
 
-        public async Task RemoveAsync(Guid id)
+        public void Remove(Guid id)
         {
             DbSet.Remove(new TEntity { Id = id });
-            await SaveChangesAsync();
         }
 
         public async Task<bool> AnyAsync(Guid id) =>

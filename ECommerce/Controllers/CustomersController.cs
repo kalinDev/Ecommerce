@@ -5,7 +5,7 @@ using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Controllers
+namespace ECommerce.Services.Api.Controllers
 {
     [ApiConventionType(typeof(DefaultApiConventions))]
     [Route("api/[controller]")]
@@ -41,26 +41,30 @@ namespace ECommerce.Controllers
         public async Task<ActionResult> PostAsync([FromBody] PostCustomerDTO postCustomerDTO)
         {
             var customer = _mapper.Map<Customer>(postCustomerDTO);
-            var customerExists = (await _repository.SearchAsync(c => c.Email == customer.Email)).Any();
-            if (customerExists) return Conflict("The email is already in use");
+            var customerExists = (await _repository.SearchAsync(c => c.Email == customer.Email))?.Any();
+            if (customerExists is true) return Conflict("The email is already in use");
             
-            await _repository.AddAsync(customer);
-            
+            _repository.Add(customer);
+            await _repository.SaveChangesAsync();
+
             return NoContent();
         }
 
         [HttpPut("{id:Guid}")]
         public async Task<ActionResult> PutAsync(Guid id, [FromBody] CustomerDTO customerDTO)
         {
-            var customer = _mapper.Map<Customer>(customerDTO);
-            if (id != customer.Id) return BadRequest();
+            if (id != customerDTO.Id) return BadRequest();
 
-            var customerExists = (await _repository.SearchAsync(c => c.Email == customer.Email && c.Id != id)).Any();
-            if (customerExists) return Conflict("The email is already in use");
+            var customerExists = (await _repository.SearchAsync(c => c.Email == customerDTO.Email && c.Id != id))?.Any();
+            if (customerExists is true) return Conflict("The email is already in use");
+
+            var customer = await _repository.FindByIdWithAddress(id);
+            var customerUpdated = _mapper.Map(customerDTO, customer);
 
             try
             {
-                await _repository.UpdateAsync(customer);
+                _repository.Update(customerUpdated);
+                await _repository.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,7 +84,8 @@ namespace ECommerce.Controllers
             var customer = await _repository.FindByIdAsync(id);
             if (customer is null) return NotFound();
 
-            await _repository.RemoveAsync(customer.Id);
+            _repository.Remove(customer.Id);
+            await _repository.SaveChangesAsync();
 
             return Ok(_mapper.Map<CustomerDTO>(customer));
         }

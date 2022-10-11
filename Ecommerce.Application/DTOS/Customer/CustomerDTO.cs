@@ -2,22 +2,22 @@
 
 namespace ECommerce.Application.DTOS.Customer
 {
-    public class CustomerDTO
+    public record class CustomerDTO
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
         
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         [Required]
         [MaxLength(100)]
         [EmailAddress]
-        public string Email { get; set; }
-
+        public string Email { get; init; }
+        
         [Required]
-        public DateTime BirthDate { get; set; }
+        public DateTime BirthDate { get; init; }
 
     }
 }

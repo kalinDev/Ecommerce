@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Ecommerce.Domain.Interfaces;
+using System.Linq.Expressions;
 
 namespace ECommerce.Domain.Interfaces
 {
@@ -7,9 +8,9 @@ namespace ECommerce.Domain.Interfaces
         Task<IEnumerable<TEntity>> SearchAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> FindByIdAsync(Guid id);
         Task<List<TEntity>> FindAsync();
-        Task AddAsync(TEntity entity);
-        Task UpdateAsync(TEntity entity);
-        Task RemoveAsync(Guid id);
+        void Add(TEntity entity);
+        void Update(TEntity entity);
+        void Remove(Guid id);
         Task<bool> AnyAsync(Guid id);
         Task<int> SaveChangesAsync();
     }

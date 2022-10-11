@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ECommerce.Migrations
+namespace ECommerce.Data.Migrations
 {
     public partial class InitialCreate : Migration
     {

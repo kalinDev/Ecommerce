@@ -2,7 +2,7 @@
 using ECommerce.Application.DTOS.Customer;
 using ECommerce.Domain.Models;
 
-namespace ECommerce.Configuration
+namespace ECommerce.Application.Configuration
 {
     public class AutoMapperConfig : Profile
     {
