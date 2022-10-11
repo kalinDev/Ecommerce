@@ -11,7 +11,7 @@ namespace ECommerce.Data.Configuration
             builder.ToTable("Customers");
             builder.HasKey(customer => customer.Id);
             builder.Property(customer => customer.Id).ValueGeneratedOnAdd();
-            builder.Property(customer => customer.Name).IsRequired().HasColumnType("varchar(100)");
+            builder.Property(customer => customer.Name).IsRequired().HasColumnType("varchar(200)");
             builder.Property(customer => customer.Email).IsRequired().HasColumnType("varchar(100)");
             builder.Property(customer => customer.DeletedAt).HasColumnType("datetime2");
             builder.Property(customer => customer.BirthDate).IsRequired().HasColumnType("datetime2");

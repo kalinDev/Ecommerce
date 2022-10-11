@@ -1,31 +1,31 @@
 ﻿using AutoMapper;
+using ECommerce.Application.Interfaces;
 using ECommerce.Application.DTOS.Customer;
 using ECommerce.Domain.Interfaces;
 using ECommerce.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Services.Api.Controllers
 {
     [ApiConventionType(typeof(DefaultApiConventions))]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController : ControllerBase
+    public class CustomersController : ApiController
     {
         private readonly ICustomerRepository _repository;
+        private readonly ICustomerService _service;
         private readonly IMapper _mapper;
 
-        public CustomersController(ICustomerRepository repository, IMapper mapper)
+        public CustomersController(ICustomerRepository repository, ICustomerService service, IMapper mapper, INotifier notifier) : base (notifier)
         {
             _repository = repository;
+            _service = service;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetAsync()
-        {
-            return Ok(_mapper.Map<IEnumerable<CustomerDTO>>(await _repository.FindAsync()));
-        }
+            => Ok(_mapper.Map<IEnumerable<CustomerDTO>>(await _repository.FindAsync()));
 
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<Customer>> GetOneAsync(Guid id)
@@ -34,48 +34,33 @@ namespace ECommerce.Services.Api.Controllers
 
             if (customer is null) return NotFound();
 
-            return Ok(_mapper.Map<DetailedCustomerDTO>(customer));
+            return CustomResponse(_mapper.Map<DetailedCustomerDTO>(customer));
         }
 
         [HttpPost]
         public async Task<ActionResult> PostAsync([FromBody] PostCustomerDTO postCustomerDTO)
         {
-            var customer = _mapper.Map<Customer>(postCustomerDTO);
-            var customerExists = (await _repository.SearchAsync(c => c.Email == customer.Email))?.Any();
-            if (customerExists is true) return Conflict("The email is already in use");
-            
-            _repository.Add(customer);
-            await _repository.SaveChangesAsync();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            return NoContent();
+            await _service.AddAsync(_mapper.Map<Customer>(postCustomerDTO));
+
+            return CustomResponse();
         }
 
         [HttpPut("{id:Guid}")]
         public async Task<ActionResult> PutAsync(Guid id, [FromBody] CustomerDTO customerDTO)
         {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            
             if (id != customerDTO.Id) return BadRequest();
 
-            var customerExists = (await _repository.SearchAsync(c => c.Email == customerDTO.Email && c.Id != id))?.Any();
-            if (customerExists is true) return Conflict("The email is already in use");
-
             var customer = await _repository.FindByIdWithAddress(id);
+            if (customer is null) return NotFound();
+
             var customerUpdated = _mapper.Map(customerDTO, customer);
-
-            try
-            {
-                _repository.Update(customerUpdated);
-                await _repository.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await CustomerExists(id))
-                {
-                    return NotFound();
-                }
-                throw;
-            }
-
-            return NoContent();
+            await _service.UpdateAsync(customerUpdated);
+            
+            return CustomResponse();
         }
 
         [HttpDelete("{id:Guid}")]
@@ -89,8 +74,5 @@ namespace ECommerce.Services.Api.Controllers
 
             return Ok(_mapper.Map<CustomerDTO>(customer));
         }
-
-        private async Task<bool> CustomerExists(Guid id) => 
-            await _repository.AnyAsync(id);
     }
 }

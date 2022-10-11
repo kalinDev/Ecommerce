@@ -1,21 +1,28 @@
 using ECommerce.Data;
 using Microsoft.EntityFrameworkCore;
 using ECommerce.Services.Api.Configurations;
+using ECommerce.Infra.CrossCutting.Ioc.Configuration;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var services = builder.Services;
 // Add services to the container.
 
-builder.Services.AddControllers();
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
-builder.Services.AddAutoMapperConfiguration();
+services.AddAutoMapperConfiguration();
 
-builder.Services.ResolveDependencies();
+services.ResolveDependencies();
 
-builder.Services.AddDbContext<ApiDbContext>(options =>
+services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+
+services.AddDbContext<ApiDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 
