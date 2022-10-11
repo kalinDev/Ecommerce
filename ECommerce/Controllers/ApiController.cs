@@ -23,8 +23,9 @@ namespace ECommerce.Services.Api.Controllers
 
             return BadRequest(new
             {
+                sucess = false,
                 errors = _notifier.GetNotifications().Select(n => n.Message)
-            });
+            }); ;
         }
 
         protected ActionResult CustomResponse(ModelStateDictionary modelState)
