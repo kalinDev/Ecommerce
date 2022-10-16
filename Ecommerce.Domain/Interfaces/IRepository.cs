@@ -1,4 +1,4 @@
-﻿using Ecommerce.Domain.Interfaces;
+﻿using ECommerce.Domain.Interfaces;
 using System.Linq.Expressions;
 
 namespace ECommerce.Domain.Interfaces

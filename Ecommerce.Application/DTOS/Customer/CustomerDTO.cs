@@ -8,11 +8,11 @@ namespace ECommerce.Application.DTOS.Customer
         public Guid Id { get; init; }
         
         [Required]
-        [MaxLength(100)]
+        [StringLength(200, MinimumLength = 2)]
         public string Name { get; init; }
 
         [Required]
-        [MaxLength(100)]
+        [StringLength(100, MinimumLength = 2)]
         [EmailAddress]
         public string Email { get; init; }
         
